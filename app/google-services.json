@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "859490918455",
+    "project_id": "product-mvvmproject",
+    "storage_bucket": "product-mvvmproject.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859490918455:android:a2cad04917ce117efe1fb2",
+        "android_client_info": {
+          "package_name": "com.Met.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGbciw-RFyIhzlHjohD07T1aljnF2DfBs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
