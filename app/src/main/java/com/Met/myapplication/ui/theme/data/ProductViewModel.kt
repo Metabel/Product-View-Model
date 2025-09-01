@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import supabaseClientProvider.SupabaseClientProvider
+import java.util.UUID
 
 class ProductViewModel(
     private val navController: NavHostController,
@@ -88,5 +89,98 @@ class ProductViewModel(
             }
         }
         return products
+    }
+
+    // delete a product
+    fun deleteProduct(productId: Int, products: SnapshotStateList<Product>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                supabase.from("Products1").delete {
+                    filter {
+                        eq("id", productId)
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Product deleted", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Delete failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    // update a product
+    fun updateProduct(
+        productId: Int,
+        name: String,
+        description: String,
+        price: Double?,
+        imageUri: Uri? = null
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                var imageURL: String? = null
+                // upload new image if needed
+                if (imageUri != null) {
+                    val bytes = context.contentResolver.openInputStream(imageUri)?.readBytes()
+                        ?: throw Exception("Unable to read image")
+                    val fileName = "${UUID.randomUUID()}.jpg"
+                    supabase.storage.from("Mumbi").upload(fileName, bytes)
+                    imageURL = supabase.storage.from("Mumbi").publicUrl(fileName)
+                }
+
+                // fetch existing product to preserve old data
+                val existingProduct = getProductById(productId)
+
+                // Build updated product object
+                val updatedProduct = Product(
+                    id = productId,
+                    name = name,
+                    description = description,
+                    price = price ?: existingProduct?.price ?: 0.0,
+                    image_url = imageURL ?: existingProduct?.image_url.orEmpty()
+                )
+
+                // update product row
+                supabase.from("Products1").update(updatedProduct) {
+                    filter {
+                        eq("id", productId)
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Product updated!", Toast.LENGTH_SHORT).show()
+                    navController.popBackStack()
+                }
+
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Update failed: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+    // get a single product
+    suspend fun getProductById(productId: Int): Product? {
+        return try {
+            val response = supabase.from("Products1")
+                .select {
+                    filter {
+                        eq("id", productId)
+                    }
+                    limit(1)
+                }
+                .decodeSingleOrNull<Product>() // ✅ returns null if not found
+
+            response
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Error loading product: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+            null
+        }
     }
 }

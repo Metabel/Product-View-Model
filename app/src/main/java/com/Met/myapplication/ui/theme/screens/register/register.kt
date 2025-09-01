@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -73,14 +74,14 @@ fun RegisterScreen(navController: NavHostController){
 
         )
         Text(
-            text="Dont have an account? register here",
+            text="Don't have an account? register here",
             color=Color.Magenta,
             fontSize = 20.sp
         )
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
             value = fullname,
-            onValueChange = {fullname=it},//updates fullname
+            onValueChange = {fullname=it},
             label={ Text(text="Fullname")},
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,14 +91,28 @@ fun RegisterScreen(navController: NavHostController){
                     imageVector = Icons.Default.Person,
                     contentDescription = "person icon"
                 )
-
-
             }
         )
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
+            value = email,
+            onValueChange = {email=it},
+            label={ Text(text="Email Address")},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = "person icon"
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+        OutlinedTextField(
             value =password,
-            onValueChange={password = it}, //updates password as user types
+            onValueChange={password = it},
             label={ Text(text="Password")},
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
@@ -113,7 +128,7 @@ fun RegisterScreen(navController: NavHostController){
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
             value =confirmpass,
-            onValueChange={confirmpass = it}, //updates fullname as user types
+            onValueChange={confirmpass = it},
             label={ Text(text=" Confirm Password")},
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
@@ -151,11 +166,7 @@ fun RegisterScreen(navController: NavHostController){
             )
         }
     }
-    }
-
-
-
-
+}
 @Preview(showBackground = true)
 @Composable
 fun RegisterPreview(){
